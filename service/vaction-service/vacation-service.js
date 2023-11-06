@@ -1,3 +1,7 @@
+const pg = require("../../database/db");
+const insertQuery = require("./utlis");
+
+
 class VacationService {
   static async createVacationRequest(data) {
     const { type, startDate, endDate } = data;
@@ -18,7 +22,6 @@ class VacationService {
       const countDays = Math.floor(timeDifference / (24 * 60 * 60 * 1000));
 
       const payload = {
-        id: Date.now(),
         type: type,
         startDate: dateStart,
         endDate: dateEnd,
@@ -27,6 +30,15 @@ class VacationService {
         numberRequest: `RE${dateStart.getTime()}${dateEnd.getTime()}`,
       };
 
+      const insert = await pg.query(insertQuery, [
+        payload.type,
+        payload.startDate,
+        payload.endDate,
+        payload.status,
+        payload.countDays,
+        payload.numberRequest,
+      ]);
+      console.log(insert)
       return {
         message: "Ваша заявка успешно создана",
         id: Date.now(),
